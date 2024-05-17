@@ -18,7 +18,7 @@ pipeline {
                     
         environment {
                         VIRTUAL_ENV_DIR = 'myprojectenv'
-                        FLASK_APP = 'main.py'
+                        FLASK_APP = 'face_detect_api.py'
                     }
                 }
             }
