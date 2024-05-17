@@ -5,11 +5,11 @@ import uvicorn
 from fastapi import FastAPI, UploadFile, File
 from fastapi import HTTPException
 import numpy as np
-from mediapipe.tasks import python
-from mediapipe.tasks.python.components import containers
-from mediapipe.tasks.python import audio
-from scipy.io import wavfile
-from pydub import AudioSegment
+# from mediapipe.tasks import python
+# from mediapipe.tasks.python.components import containers
+# from mediapipe.tasks.python import audio
+# from scipy.io import wavfile
+# from pydub import AudioSegment
 import random
 
 app = FastAPI()
