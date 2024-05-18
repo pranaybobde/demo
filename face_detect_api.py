@@ -138,8 +138,8 @@ async def read_root():
 #     return len(sound)
 
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port = "4400")
+# if __name__ == "__main__":
+#     uvicorn.run(app, host="localhost", port = "4400")
 
 
 
