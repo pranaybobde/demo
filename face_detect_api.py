@@ -18,37 +18,37 @@ app = FastAPI()
 async def read_root():
     return "Server is live !!!"
 
-@app.post("/detect_face/")
-async def face_detect(input_image: UploadFile = File(...)):
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+# @app.post("/detect_face/")
+# async def face_detect(input_image: UploadFile = File(...)):
+#     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
-    try:
-        image_bytes = await input_image.read()
-        nparr = np.frombuffer(image_bytes, np.uint8)
-        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail="Error decoding image: " + str(e))
+#     try:
+#         image_bytes = await input_image.read()
+#         nparr = np.frombuffer(image_bytes, np.uint8)
+#         image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+#     except Exception as e:
+#         raise HTTPException(status_code=400, detail="Error decoding image: " + str(e))
     
-    if image is None:
-        raise HTTPException(status_code=400, detail="Image file could not be loaded")
+#     if image is None:
+#         raise HTTPException(status_code=400, detail="Image file could not be loaded")
 
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(40, 40))
+#     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(40, 40))
 
-    num_faces = len(faces)
+#     num_faces = len(faces)
 
-    for (x, y, w, h) in faces:
-        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+#     for (x, y, w, h) in faces:
+#         cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
-    resize_img = cv2.resize(image, (0, 0), fx = 0.5, fy = 0.5)
+#     resize_img = cv2.resize(image, (0, 0), fx = 0.5, fy = 0.5)
 
-    if num_faces == 1:
-        return {"Message":"single face detected",
-                "Result": True}
-    else:
-        return {"Message":"multiple face detected. please upload single front facing image",
-                "Result": False}
+#     if num_faces == 1:
+#         return {"Message":"single face detected",
+#                 "Result": True}
+#     else:
+#         return {"Message":"multiple face detected. please upload single front facing image",
+#                 "Result": False}
 
 # @app.post("/detect_audio/")
 # async def speech_detect(audio_file: UploadFile = File(...)):
