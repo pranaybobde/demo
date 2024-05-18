@@ -1,6 +1,6 @@
 import cv2
 import os
-import warnings
+# import warnings
 import uvicorn
 from fastapi import FastAPI, UploadFile, File
 from fastapi import HTTPException
@@ -44,96 +44,98 @@ async def face_detect(input_image: UploadFile = File(...)):
     resize_img = cv2.resize(image, (0, 0), fx = 0.5, fy = 0.5)
 
     if num_faces == 1:
-        return {"Result": True}
+        return {"Message":"single face detected",
+                "Result": True}
     else:
-        return {"Result": False}
+        return {"Message":"multiple face detected. please upload single front facing image",
+                "Result": False}
 
-@app.post("/detect_audio/")
-async def speech_detect(audio_file: UploadFile = File(...)):
-    audio_file_path = f"./{audio_file.filename}"
-    # audio_file_name = audio_file_path.split(".")
-    # converted_audio_file = f"./{audio_file_name[0]}.wav"
-    if audio_file_path.endswith(".mp3") or audio_file_path.endswith(".m4a"):
-        print("audio file will get convert into .wav format")
-        res = await convert_to_wav(audio_file_path)
-        print(f"Audio file converted to {res}")
+# @app.post("/detect_audio/")
+# async def speech_detect(audio_file: UploadFile = File(...)):
+#     audio_file_path = f"./{audio_file.filename}"
+#     # audio_file_name = audio_file_path.split(".")
+#     # converted_audio_file = f"./{audio_file_name[0]}.wav"
+#     if audio_file_path.endswith(".mp3") or audio_file_path.endswith(".m4a"):
+#         print("audio file will get convert into .wav format")
+#         res = await convert_to_wav(audio_file_path)
+#         print(f"Audio file converted to {res}")
 
-        base_options = python.BaseOptions(model_asset_path='classifier.tflite')
-        options = audio.AudioClassifierOptions(base_options=base_options, max_results=4)
+#         base_options = python.BaseOptions(model_asset_path='classifier.tflite')
+#         options = audio.AudioClassifierOptions(base_options=base_options, max_results=4)
 
-        with audio.AudioClassifier.create_from_options(options) as classifier:
-            sample_rate, wav_data = wavfile.read(res)
-            print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-            print(wav_data)
-            audio_clip = containers.AudioData.create_from_array(
-                wav_data.astype(float) / np.iinfo(np.int16).max, sample_rate)
-            classification_result_list = classifier.classify(audio_clip)
-        print("=====>>>>")
-        music_category_count = 0
-        duration = await audio_length(res)
-        num_values = 6
-        duration_list = []
-        for _ in range(num_values):
-            random_duration = random.randint(100, duration)
-            duration_list.append(random_duration)
-        # print(duration, "===============>")
-        # for idx, timestamp in enumerate([0, 975, 1950, 2925]):
-        for idx, timestamp in enumerate(duration_list):
-            classification_result = classification_result_list[idx]
-            top_category = classification_result.classifications[0].categories[0]
-            # print(f'Timestamp {timestamp}: {top_category.category_name} ({top_category.score:.2f})')
+#         with audio.AudioClassifier.create_from_options(options) as classifier:
+#             sample_rate, wav_data = wavfile.read(res)
+#             print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+#             print(wav_data)
+#             audio_clip = containers.AudioData.create_from_array(
+#                 wav_data.astype(float) / np.iinfo(np.int16).max, sample_rate)
+#             classification_result_list = classifier.classify(audio_clip)
+#         print("=====>>>>")
+#         music_category_count = 0
+#         duration = await audio_length(res)
+#         num_values = 6
+#         duration_list = []
+#         for _ in range(num_values):
+#             random_duration = random.randint(100, duration)
+#             duration_list.append(random_duration)
+#         # print(duration, "===============>")
+#         # for idx, timestamp in enumerate([0, 975, 1950, 2925]):
+#         for idx, timestamp in enumerate(duration_list):
+#             classification_result = classification_result_list[idx]
+#             top_category = classification_result.classifications[0].categories[0]
+#             # print(f'Timestamp {timestamp}: {top_category.category_name} ({top_category.score:.2f})')
 
-            if top_category.category_name.lower() == "music":
-                music_category_count += 1
+#             if top_category.category_name.lower() == "music":
+#                 music_category_count += 1
 
-    else:
-        base_options = python.BaseOptions(model_asset_path='classifier.tflite')
-        options = audio.AudioClassifierOptions(base_options=base_options, max_results=4)
+#     else:
+#         base_options = python.BaseOptions(model_asset_path='classifier.tflite')
+#         options = audio.AudioClassifierOptions(base_options=base_options, max_results=4)
 
-        with audio.AudioClassifier.create_from_options(options) as classifier:
-            sample_rate, wav_data = wavfile.read(audio_file_path)
-            print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-            print(wav_data)
-            audio_clip = containers.AudioData.create_from_array(wav_data.astype(float) / np.iinfo(np.int16).max, sample_rate)
-            classification_result_list = classifier.classify(audio_clip)
+#         with audio.AudioClassifier.create_from_options(options) as classifier:
+#             sample_rate, wav_data = wavfile.read(audio_file_path)
+#             print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+#             print(wav_data)
+#             audio_clip = containers.AudioData.create_from_array(wav_data.astype(float) / np.iinfo(np.int16).max, sample_rate)
+#             classification_result_list = classifier.classify(audio_clip)
 
-        music_category_count = 0
-        duration = await audio_length(audio_file_path)
-        num_values = 6
-        duration_list = []
-        for _ in range(num_values):
-            random_duration = random.randint(100, duration)
-            duration_list.append(random_duration)
-        # print(duration, "===============>")
-        # for idx, timestamp in enumerate([0, 975, 1950, 2925]):
-        for idx, timestamp in enumerate(duration_list):
+#         music_category_count = 0
+#         duration = await audio_length(audio_file_path)
+#         num_values = 6
+#         duration_list = []
+#         for _ in range(num_values):
+#             random_duration = random.randint(100, duration)
+#             duration_list.append(random_duration)
+#         # print(duration, "===============>")
+#         # for idx, timestamp in enumerate([0, 975, 1950, 2925]):
+#         for idx, timestamp in enumerate(duration_list):
 
-            classification_result = classification_result_list[idx]
-            top_category = classification_result.classifications[0].categories[0]
-            # print(f'Timestamp {timestamp}: {top_category.category_name} ({top_category.score:.2f})')
+#             classification_result = classification_result_list[idx]
+#             top_category = classification_result.classifications[0].categories[0]
+#             # print(f'Timestamp {timestamp}: {top_category.category_name} ({top_category.score:.2f})')
 
-            if top_category.category_name.lower() == "music":
-                music_category_count += 1
+#             if top_category.category_name.lower() == "music":
+#                 music_category_count += 1
 
-    if music_category_count >= 1:
-        return {"Result": False}
-    else:
-        return {"Result": True}
+#     if music_category_count >= 1:
+#         return {"Result": False}
+#     else:
+#         return {"Result": True}
 
-async def convert_to_wav(audio_file_path):
-    sound = AudioSegment.from_file(audio_file_path)
-    output_format = "wav"
+# async def convert_to_wav(audio_file_path):
+#     sound = AudioSegment.from_file(audio_file_path)
+#     output_format = "wav"
 
-    audio_file_name = audio_file_path.split(".")
-    converted_audio_file = f"./{audio_file_name[0]}.wav"
+#     audio_file_name = audio_file_path.split(".")
+#     converted_audio_file = f"./{audio_file_name[0]}.wav"
 
-    sound.export(converted_audio_file, format=output_format)
-    print("Done")
-    return converted_audio_file
+#     sound.export(converted_audio_file, format=output_format)
+#     print("Done")
+#     return converted_audio_file
 
-async def audio_length(audio_file_path):
-    sound = AudioSegment.from_file(audio_file_path)
-    return len(sound)
+# async def audio_length(audio_file_path):
+#     sound = AudioSegment.from_file(audio_file_path)
+#     return len(sound)
 
 
 if __name__ == "__main__":
